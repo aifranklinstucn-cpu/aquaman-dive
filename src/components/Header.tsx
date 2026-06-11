@@ -20,6 +20,9 @@ export default function Header({ locale }: { locale: Locale }) {
             <Link href={`/${locale}/courses`} className="text-zinc-700 hover:text-cyan-600 transition-colors">
               {t('courses')}
             </Link>
+            <Link href={`/${locale}/liveaboard`} className="text-zinc-700 hover:text-cyan-600 transition-colors font-medium">
+              {t('liveaboard')}
+            </Link>
             <Link href={`/${locale}/booking`} className="text-zinc-700 hover:text-cyan-600 transition-colors">
               {t('booking')}
             </Link>
