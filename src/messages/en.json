@@ -67,5 +67,30 @@
   },
   "footer": {
     "copyright": "© 2026 AQUAMAN Phuket Diving. All rights reserved."
+  },
+  "admin": {
+    "title": "Admin",
+    "dashboard": "Dashboard",
+    "ships": "Ships",
+    "courses": "Courses",
+    "trips": "Trips",
+    "bookings": "Bookings",
+    "settings": "Settings",
+    "backToSite": "Back to Site",
+    "recentBookings": "Recent Bookings",
+    "bookingNo": "Booking No",
+    "customer": "Customer",
+    "type": "Type",
+    "date": "Date",
+    "status": "Status",
+    "amount": "Amount",
+    "noBookings": "No bookings yet",
+    "liveaboard": "Liveaboard",
+    "course": "Course",
+    "trip": "Trip",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled",
+    "completed": "Completed"
   }
 }

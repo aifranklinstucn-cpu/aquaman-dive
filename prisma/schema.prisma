@@ -1,0 +1,246 @@
+// Prisma schema for AQUAMAN Diving Website
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ============================================
+// PRODUCT MODELS
+// ============================================
+
+// 船只（船宿）
+model Ship {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  image       String?
+  facilities  String?  // JSON string for facilities list
+  isActive    Boolean  @default(true)
+  displayOrder Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  cabins      Cabin[]
+  prices      ShipPrice[]
+  bookings    Booking[]
+
+  @@index([isActive])
+  @@index([displayOrder])
+}
+
+// 舱位类型
+model Cabin {
+  id          String   @id @default(cuid())
+  shipId      String
+  name        String
+  description String?
+  maxGuests   Int      @default(2)
+  facilities  String?  // JSON string
+  displayOrder Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ship        Ship     @relation(fields: [shipId], references: [id], onDelete: Cascade)
+  prices      ShipPrice[]
+  bookings    BookingCabin[]
+
+  @@index([shipId])
+}
+
+// 船宿价格（按船+舱位+套餐）
+model ShipPrice {
+  id        String   @id @default(cuid())
+  shipId    String
+  cabinId   String
+  tripType  String   // "2D1N", "3D2N", "4D3N"
+  price     Int      // 价格（泰铢）
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  ship      Ship     @relation(fields: [shipId], references: [id], onDelete: Cascade)
+  cabin     Cabin    @relation(fields: [cabinId], references: [id], onDelete: Cascade)
+
+  @@unique([shipId, cabinId, tripType])
+  @@index([shipId])
+}
+
+// 潜水课程
+model Course {
+  id          String   @id @default(cuid())
+  code        String   @unique // "ow", "aow", "rescue", etc.
+  name        String
+  description String?
+  image       String?
+  duration    String?  // "3-4 days", "2 days"
+  maxStudents Int      @default(4)
+  isActive    Boolean  @default(true)
+  displayOrder Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  prices      CoursePrice[]
+  bookings    Booking[]
+
+  @@index([isActive])
+  @@index([code])
+}
+
+// 课程价格
+model CoursePrice {
+  id        String   @id @default(cuid())
+  courseId  String
+  price     Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+}
+
+// 一日游行程（Fun Dive, DSD, 浮潜等）
+model Trip {
+  id          String   @id @default(cuid())
+  code        String   @unique // "fun-dive", "dsd", "snorkeling"
+  name        String
+  description String?
+  image       String?
+  type        String   // "fun-dive", "dsd", "snorkeling"
+  duration    String?  // "half-day", "full-day"
+  isActive    Boolean  @default(true)
+  displayOrder Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  prices      TripPrice[]
+  bookings    Booking[]
+
+  @@index([isActive])
+  @@index([type])
+}
+
+// 一日游价格
+model TripPrice {
+  id        String   @id @default(cuid())
+  tripId    String
+  price     Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+}
+
+// ============================================
+// BOOKING MODELS
+// ============================================
+
+// 主预订记录
+model Booking {
+  id            String   @id @default(cuid())
+  bookingNumber String   @unique // "BK20260611001"
+  type          String   // "liveaboard", "course", "trip"
+  status        String   @default("pending") // "pending", "confirmed", "cancelled", "completed"
+
+  // Customer info
+  customerName  String
+  customerEmail String
+  customerPhone String
+  certification String?  // 潜水证书级别
+
+  // Date info
+  bookingDate   DateTime
+  guests        Int      @default(1)
+
+  // Financial
+  totalPrice    Int
+  depositPaid   Int      @default(0)
+  paymentStatus String   @default("unpaid") // "unpaid", "deposit", "paid", "refunded"
+
+  // Notes
+  notes         String?
+
+  // Relations
+  shipId        String?
+  courseId      String?
+  tripId        String?
+
+  ship          Ship?    @relation(fields: [shipId], references: [id])
+  course        Course?  @relation(fields: [courseId], references: [id])
+  trip          Trip?   @relation(fields: [tripId], references: [id])
+
+  bookingCabins BookingCabin[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([bookingDate])
+  @@index([type])
+}
+
+// 船宿预订的舱位信息
+model BookingCabin {
+  id          String   @id @default(cuid())
+  bookingId   String
+  cabinId     String
+  tripType    String   // "2D1N", "3D2N", "4D3N"
+  price       Int
+
+  // Relations
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  cabin       Cabin    @relation(fields: [cabinId], references: [id])
+
+  @@index([bookingId])
+}
+
+// ============================================
+// SITE MANAGEMENT
+// ============================================
+
+// 页面/导航管理
+model Page {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  content     String?  // JSON or HTML
+  type        String   // "page", "section", "nav-item"
+  isPublished Boolean  @default(true)
+  displayOrder Int     @default(0)
+  metaTitle   String?
+  metaDesc    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isPublished])
+}
+
+// 网站设置
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  group     String   @default("general") // "general", "booking", "payment"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([group])
+}

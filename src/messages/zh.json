@@ -67,5 +67,30 @@
   },
   "footer": {
     "copyright": "© 2026 AQUAMAN 普吉岛潜水. 保留所有权利。"
+  },
+  "admin": {
+    "title": "管理后台",
+    "dashboard": "仪表盘",
+    "ships": "船只",
+    "courses": "课程",
+    "trips": "行程",
+    "bookings": "预订",
+    "settings": "设置",
+    "backToSite": "返回网站",
+    "recentBookings": "最近预订",
+    "bookingNo": "订单号",
+    "customer": "客户",
+    "type": "类型",
+    "date": "日期",
+    "status": "状态",
+    "amount": "金额",
+    "noBookings": "暂无预订",
+    "liveaboard": "船宿",
+    "course": "课程",
+    "trip": "行程",
+    "pending": "待确认",
+    "confirmed": "已确认",
+    "cancelled": "已取消",
+    "completed": "已完成"
   }
 }

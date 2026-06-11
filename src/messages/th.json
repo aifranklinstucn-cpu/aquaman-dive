@@ -67,5 +67,30 @@
   },
   "footer": {
     "copyright": "© 2026 AQUAMAN ดำน้ำภูเก็ต สงวนลิขสิทธิ์"
+  },
+  "admin": {
+    "title": "แผงควบคุม",
+    "dashboard": "แดชบอร์ด",
+    "ships": "เรือ",
+    "courses": "หลักสูตร",
+    "trips": "ทริป",
+    "bookings": "การจอง",
+    "settings": "ตั้งค่า",
+    "backToSite": "กลับสู่เว็บไซต์",
+    "recentBookings": "การจองล่าสุด",
+    "bookingNo": "หมายเลขการจอง",
+    "customer": "ลูกค้า",
+    "type": "ประเภท",
+    "date": "วันที่",
+    "status": "สถานะ",
+    "amount": "จำนวนเงิน",
+    "noBookings": "ยังไม่มีการจอง",
+    "liveaboard": "ไหล่าบอร์ด",
+    "course": "หลักสูตร",
+    "trip": "ทริป",
+    "pending": "รอตรวจสอบ",
+    "confirmed": "ยืนยันแล้ว",
+    "cancelled": "ยกเลิก",
+    "completed": "เสร็จสิ้น"
   }
 }
