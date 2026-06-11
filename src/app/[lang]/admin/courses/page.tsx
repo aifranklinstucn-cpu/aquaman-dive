@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -35,6 +36,7 @@ interface Course {
 }
 
 export default function CoursesPage() {
+  const t = useTranslations('admin');
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,16 +148,16 @@ export default function CoursesPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-zinc-900">课程管理</h1>
+        <h1 className="text-3xl font-bold text-zinc-900">{t('courses')}</h1>
         <Button onClick={() => openModal()} className="bg-cyan-600 hover:bg-cyan-700">
-          + 添加课程
+          + {t('addCourse')}
         </Button>
       </div>
 
       {courses.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-zinc-500">
-            还没有课程，点击上方按钮添加第一个课程
+            {t('noCourses')}
           </CardContent>
         </Card>
       ) : (
@@ -169,7 +171,7 @@ export default function CoursesPage() {
                     <span className="text-sm text-zinc-500 font-mono">{course.code.toUpperCase()}</span>
                   </div>
                   <span className={`px-2 py-1 rounded text-xs ${course.isActive ? 'bg-green-100 text-green-700' : 'bg-zinc-200 text-zinc-500'}`}>
-                    {course.isActive ? '启用' : '禁用'}
+                    {course.isActive ? t('active') : t('inactive')}
                   </span>
                 </div>
               </CardHeader>
@@ -178,24 +180,24 @@ export default function CoursesPage() {
                   <img src={course.image} alt={course.name} className="w-full h-40 object-cover rounded-lg mb-4" />
                 )}
                 <p className="text-zinc-600 text-sm mb-4 line-clamp-2">
-                  {course.description || '暂无描述'}
+                  {course.description || t('description')}
                 </p>
                 <div className="flex items-center justify-between text-sm text-zinc-500 mb-4">
-                  <span>时长: {course.duration || '-'}</span>
-                  <span>人数上限: {course.maxStudents}</span>
+                  <span>{t('duration')}: {course.duration || '-'}</span>
+                  <span>{t('maxStudents')}: {course.maxStudents}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xl font-bold text-cyan-600">฿{course.prices[0]?.price?.toLocaleString() || 0}</span>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => openModal(course)}>
-                      编辑
+                      {t('edit')}
                     </Button>
                     <Button
                       variant={course.isActive ? 'destructive' : 'default'}
                       size="sm"
                       onClick={() => toggleActive(course)}
                     >
-                      {course.isActive ? '禁用' : '启用'}
+                      {course.isActive ? t('disable') : t('enable')}
                     </Button>
                   </div>
                 </div>
@@ -209,44 +211,43 @@ export default function CoursesPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editingCourse ? '编辑课程' : '添加课程'}</DialogTitle>
+            <DialogTitle>{editingCourse ? t('editCourse') : t('addCourse')}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>课程代码</Label>
+                  <Label>{t('courseCode')}</Label>
                   <Input
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value.toLowerCase() })}
                     required
-                    placeholder="例如: ow, aow"
+                    placeholder="ow, aow"
                     disabled={!!editingCourse}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>课程名称</Label>
+                  <Label>{t('shipName')}</Label>
                   <Input
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    placeholder="例如: 开放水域潜水员"
+                    placeholder="开放水域潜水员"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>描述</Label>
+                <Label>{t('description')}</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="课程介绍..."
                   rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>图片 URL</Label>
+                <Label>{t('imageUrl')}</Label>
                 <Input
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
@@ -256,15 +257,15 @@ export default function CoursesPage() {
 
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label>时长</Label>
+                  <Label>{t('duration')}</Label>
                   <Input
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                    placeholder="例如: 3-4天"
+                    placeholder="3-4天"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>人数上限</Label>
+                  <Label>{t('maxStudents')}</Label>
                   <Input
                     type="number"
                     value={formData.maxStudents}
@@ -272,7 +273,7 @@ export default function CoursesPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>价格 (฿)</Label>
+                  <Label>{t('price')}</Label>
                   <Input
                     type="number"
                     value={formData.price}
@@ -283,7 +284,7 @@ export default function CoursesPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>显示顺序</Label>
+                  <Label>{t('displayOrder')}</Label>
                   <Input
                     type="number"
                     value={formData.displayOrder}
@@ -291,7 +292,7 @@ export default function CoursesPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>状态</Label>
+                  <Label>{t('status')}</Label>
                   <Select
                     value={formData.isActive ? 'true' : 'false'}
                     onValueChange={(v) => setFormData({ ...formData, isActive: v === 'true' })}
@@ -300,8 +301,8 @@ export default function CoursesPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="true">启用</SelectItem>
-                      <SelectItem value="false">禁用</SelectItem>
+                      <SelectItem value="true">{t('active')}</SelectItem>
+                      <SelectItem value="false">{t('inactive')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -310,10 +311,10 @@ export default function CoursesPage() {
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={closeModal}>
-                取消
+                {t('cancel')}
               </Button>
               <Button type="submit" className="bg-cyan-600 hover:bg-cyan-700">
-                保存
+                {t('save')}
               </Button>
             </DialogFooter>
           </form>

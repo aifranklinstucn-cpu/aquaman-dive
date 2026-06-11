@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -40,6 +41,7 @@ interface Cabin {
 }
 
 export default function ShipsPage() {
+  const t = useTranslations('admin');
   const [ships, setShips] = useState<Ship[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,16 +157,16 @@ export default function ShipsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-zinc-900">船只管理</h1>
+        <h1 className="text-3xl font-bold text-zinc-900">{t('ships')}</h1>
         <Button onClick={() => openModal()} className="bg-cyan-600 hover:bg-cyan-700">
-          + 添加船只
+          + {t('addShip')}
         </Button>
       </div>
 
       {ships.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-zinc-500">
-            还没有船只，点击上方按钮添加第一条船
+            {t('noShips')}
           </CardContent>
         </Card>
       ) : (
@@ -175,7 +177,7 @@ export default function ShipsPage() {
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-xl">{ship.name}</CardTitle>
                   <span className={`px-2 py-1 rounded text-xs ${ship.isActive ? 'bg-green-100 text-green-700' : 'bg-zinc-200 text-zinc-500'}`}>
-                    {ship.isActive ? '启用' : '禁用'}
+                    {ship.isActive ? t('active') : t('inactive')}
                   </span>
                 </div>
               </CardHeader>
@@ -184,21 +186,21 @@ export default function ShipsPage() {
                   <img src={ship.image} alt={ship.name} className="w-full h-40 object-cover rounded-lg mb-4" />
                 )}
                 <p className="text-zinc-600 text-sm mb-4 line-clamp-2">
-                  {ship.description || '暂无描述'}
+                  {ship.description || t('description')}
                 </p>
                 <div className="text-sm text-zinc-500 mb-4">
-                  舱位数量: {ship.cabins.length}
+                  {t('cabinType')}: {ship.cabins.length}
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => openModal(ship)}>
-                    编辑
+                    {t('edit')}
                   </Button>
                   <Button
                     variant={ship.isActive ? 'destructive' : 'default'}
                     size="sm"
                     onClick={() => toggleActive(ship)}
                   >
-                    {ship.isActive ? '禁用' : '启用'}
+                    {ship.isActive ? t('disable') : t('enable')}
                   </Button>
                 </div>
               </CardContent>
@@ -211,32 +213,31 @@ export default function ShipsPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingShip ? '编辑船只' : '添加船只'}</DialogTitle>
+            <DialogTitle>{editingShip ? t('editShip') : t('addShip')}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>船只名称</Label>
+                <Label>{t('shipName')}</Label>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  placeholder="例如: MV Similan Dream"
+                  placeholder="MV Similan Dream"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>描述</Label>
+                <Label>{t('description')}</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="船只介绍..."
                   rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>图片 URL</Label>
+                <Label>{t('imageUrl')}</Label>
                 <Input
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
@@ -245,7 +246,7 @@ export default function ShipsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>设施 (JSON格式)</Label>
+                <Label>{t('facilities')}</Label>
                 <Textarea
                   value={formData.facilities}
                   onChange={(e) => setFormData({ ...formData, facilities: e.target.value })}
@@ -256,7 +257,7 @@ export default function ShipsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>显示顺序</Label>
+                  <Label>{t('displayOrder')}</Label>
                   <Input
                     type="number"
                     value={formData.displayOrder}
@@ -264,7 +265,7 @@ export default function ShipsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>状态</Label>
+                  <Label>{t('status')}</Label>
                   <Select
                     value={formData.isActive ? 'true' : 'false'}
                     onValueChange={(v) => setFormData({ ...formData, isActive: v === 'true' })}
@@ -273,8 +274,8 @@ export default function ShipsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="true">启用</SelectItem>
-                      <SelectItem value="false">禁用</SelectItem>
+                      <SelectItem value="true">{t('active')}</SelectItem>
+                      <SelectItem value="false">{t('inactive')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -283,9 +284,9 @@ export default function ShipsPage() {
               {/* Cabins */}
               <div className="border-t pt-4 mt-4">
                 <div className="flex items-center justify-between mb-4">
-                  <Label className="text-lg">舱位类型</Label>
+                  <Label className="text-lg">{t('cabinType')}</Label>
                   <Button type="button" variant="outline" size="sm" onClick={addCabin}>
-                    + 添加舱位
+                    + {t('addCabin')}
                   </Button>
                 </div>
                 <div className="space-y-3">
@@ -293,12 +294,12 @@ export default function ShipsPage() {
                     <div key={index} className="flex gap-3 items-start p-3 bg-zinc-50 rounded-lg">
                       <div className="flex-1 space-y-2">
                         <Input
-                          placeholder="舱位名称 (例如: 标准舱)"
+                          placeholder={t('cabinName')}
                           value={cabin.name}
                           onChange={(e) => updateCabin(index, 'name', e.target.value)}
                         />
                         <Input
-                          placeholder="描述"
+                          placeholder={t('description')}
                           value={cabin.description}
                           onChange={(e) => updateCabin(index, 'description', e.target.value)}
                         />
@@ -306,7 +307,7 @@ export default function ShipsPage() {
                       <div className="w-24">
                         <Input
                           type="number"
-                          placeholder="人数"
+                          placeholder={t('maxGuests')}
                           value={cabin.maxGuests}
                           onChange={(e) => updateCabin(index, 'maxGuests', parseInt(e.target.value) || 2)}
                         />
@@ -322,10 +323,10 @@ export default function ShipsPage() {
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={closeModal}>
-                取消
+                {t('cancel')}
               </Button>
               <Button type="submit" className="bg-cyan-600 hover:bg-cyan-700">
-                保存
+                {t('save')}
               </Button>
             </DialogFooter>
           </form>

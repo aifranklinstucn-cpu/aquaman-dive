@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -33,6 +34,7 @@ interface Booking {
 }
 
 export default function BookingsPage() {
+  const t = useTranslations('admin');
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<{ type: string; status: string }>({ type: 'all', status: 'all' });
@@ -72,9 +74,9 @@ export default function BookingsPage() {
 
   function getTypeLabel(type: string) {
     switch (type) {
-      case 'liveaboard': return '🚢 船宿';
-      case 'course': return '📚 课程';
-      case 'trip': return '🏊 行程';
+      case 'liveaboard': return '🚢 ' + t('liveaboard');
+      case 'course': return '📚 ' + t('course');
+      case 'trip': return '🏊 ' + t('trip');
       default: return type;
     }
   }
@@ -96,7 +98,7 @@ export default function BookingsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-zinc-900">预订管理</h1>
+        <h1 className="text-3xl font-bold text-zinc-900">{t('bookings')}</h1>
 
         <div className="flex gap-4">
           <Select
@@ -104,13 +106,13 @@ export default function BookingsPage() {
             onValueChange={(v) => setFilter({ ...filter, type: v || 'all' })}
           >
             <SelectTrigger className="w-32">
-              <SelectValue placeholder="类型" />
+              <SelectValue placeholder={t('type')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">全部类型</SelectItem>
-              <SelectItem value="liveaboard">船宿</SelectItem>
-              <SelectItem value="course">课程</SelectItem>
-              <SelectItem value="trip">行程</SelectItem>
+              <SelectItem value="all">{t('allTypes')}</SelectItem>
+              <SelectItem value="liveaboard">{t('liveaboard')}</SelectItem>
+              <SelectItem value="course">{t('course')}</SelectItem>
+              <SelectItem value="trip">{t('trip')}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -119,14 +121,14 @@ export default function BookingsPage() {
             onValueChange={(v) => setFilter({ ...filter, status: v || 'all' })}
           >
             <SelectTrigger className="w-32">
-              <SelectValue placeholder="状态" />
+              <SelectValue placeholder={t('status')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">全部状态</SelectItem>
-              <SelectItem value="pending">待确认</SelectItem>
-              <SelectItem value="confirmed">已确认</SelectItem>
-              <SelectItem value="cancelled">已取消</SelectItem>
-              <SelectItem value="completed">已完成</SelectItem>
+              <SelectItem value="all">{t('allStatus')}</SelectItem>
+              <SelectItem value="pending">{t('pending')}</SelectItem>
+              <SelectItem value="confirmed">{t('confirmed')}</SelectItem>
+              <SelectItem value="cancelled">{t('cancelled')}</SelectItem>
+              <SelectItem value="completed">{t('completed')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -135,7 +137,7 @@ export default function BookingsPage() {
       {bookings.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-zinc-500">
-            暂无预订记录
+            {t('noBookings')}
           </CardContent>
         </Card>
       ) : (
@@ -145,14 +147,14 @@ export default function BookingsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b bg-zinc-50">
-                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">订单号</th>
-                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">客户</th>
-                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">类型</th>
-                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">日期</th>
-                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">人数</th>
-                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">金额</th>
-                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">状态</th>
-                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">操作</th>
+                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">{t('bookingNo')}</th>
+                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">{t('customer')}</th>
+                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">{t('type')}</th>
+                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">{t('date')}</th>
+                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">{t('guestsLabel')}</th>
+                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">{t('amount')}</th>
+                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">{t('status')}</th>
+                    <th className="text-left py-4 px-6 text-sm font-medium text-zinc-500">{t('action')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -177,10 +179,7 @@ export default function BookingsPage() {
                       <td className="py-4 px-6 font-semibold">฿{booking.totalPrice.toLocaleString()}</td>
                       <td className="py-4 px-6">
                         <span className={`px-2 py-1 rounded text-sm ${getStatusColor(booking.status)}`}>
-                          {booking.status === 'pending' && '待确认'}
-                          {booking.status === 'confirmed' && '已确认'}
-                          {booking.status === 'cancelled' && '已取消'}
-                          {booking.status === 'completed' && '已完成'}
+                          {t(booking.status)}
                         </span>
                       </td>
                       <td className="py-4 px-6">
@@ -192,10 +191,10 @@ export default function BookingsPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="pending">待确认</SelectItem>
-                            <SelectItem value="confirmed">已确认</SelectItem>
-                            <SelectItem value="cancelled">已取消</SelectItem>
-                            <SelectItem value="completed">已完成</SelectItem>
+                            <SelectItem value="pending">{t('pending')}</SelectItem>
+                            <SelectItem value="confirmed">{t('confirmed')}</SelectItem>
+                            <SelectItem value="cancelled">{t('cancelled')}</SelectItem>
+                            <SelectItem value="completed">{t('completed')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </td>

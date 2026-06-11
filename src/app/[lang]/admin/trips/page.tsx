@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,13 +35,8 @@ interface Trip {
   prices: { price: number }[];
 }
 
-const tripTypes = [
-  { value: 'fun-dive', label: 'Fun Dive', description: '持证潜水员一日游' },
-  { value: 'dsd', label: 'DSD 体验潜水', description: '初次体验潜水' },
-  { value: 'snorkeling', label: '浮潜', description: '浮潜行程' },
-];
-
 export default function TripsPage() {
+  const t = useTranslations('admin');
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,8 +142,12 @@ export default function TripsPage() {
   }
 
   function getTripTypeLabel(type: string) {
-    const found = tripTypes.find(t => t.value === type);
-    return found ? found.label : type;
+    const labels: Record<string, { zh: string; en: string; th: string }> = {
+      'fun-dive': { zh: t('funDive'), en: t('funDive'), th: t('funDive') },
+      'dsd': { zh: t('dsd'), en: t('dsd'), th: t('dsd') },
+      'snorkeling': { zh: t('snorkeling'), en: t('snorkeling'), th: t('snorkeling') },
+    };
+    return labels[type]?.zh || type;
   }
 
   if (loading) {
@@ -158,18 +158,18 @@ export default function TripsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-900">行程管理</h1>
-          <p className="text-zinc-500 mt-1">Fun Dive / DSD 体验潜水 / 浮潜</p>
+          <h1 className="text-3xl font-bold text-zinc-900">{t('trips')}</h1>
+          <p className="text-zinc-500 mt-1">Fun Dive / DSD / {t('snorkeling')}</p>
         </div>
         <Button onClick={() => openModal()} className="bg-cyan-600 hover:bg-cyan-700">
-          + 添加行程
+          + {t('addTrip')}
         </Button>
       </div>
 
       {trips.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-zinc-500">
-            还没有行程，点击上方按钮添加第一个行程
+            {t('noTrips')}
           </CardContent>
         </Card>
       ) : (
@@ -189,7 +189,7 @@ export default function TripsPage() {
                     </span>
                   </div>
                   <span className={`px-2 py-1 rounded text-xs ${trip.isActive ? 'bg-green-100 text-green-700' : 'bg-zinc-200 text-zinc-500'}`}>
-                    {trip.isActive ? '启用' : '禁用'}
+                    {trip.isActive ? t('active') : t('inactive')}
                   </span>
                 </div>
               </CardHeader>
@@ -198,23 +198,23 @@ export default function TripsPage() {
                   <img src={trip.image} alt={trip.name} className="w-full h-40 object-cover rounded-lg mb-4" />
                 )}
                 <p className="text-zinc-600 text-sm mb-4 line-clamp-2">
-                  {trip.description || '暂无描述'}
+                  {trip.description || t('description')}
                 </p>
                 <div className="text-sm text-zinc-500 mb-4">
-                  时长: {trip.duration || '-'}
+                  {t('duration')}: {trip.duration || '-'}
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xl font-bold text-cyan-600">฿{trip.prices[0]?.price?.toLocaleString() || 0}</span>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => openModal(trip)}>
-                      编辑
+                      {t('edit')}
                     </Button>
                     <Button
                       variant={trip.isActive ? 'destructive' : 'default'}
                       size="sm"
                       onClick={() => toggleActive(trip)}
                     >
-                      {trip.isActive ? '禁用' : '启用'}
+                      {trip.isActive ? t('disable') : t('enable')}
                     </Button>
                   </div>
                 </div>
@@ -228,23 +228,23 @@ export default function TripsPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editingTrip ? '编辑行程' : '添加行程'}</DialogTitle>
+            <DialogTitle>{editingTrip ? t('editTrip') : t('addTrip')}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>行程代码</Label>
+                  <Label>{t('tripCode')}</Label>
                   <Input
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value.toLowerCase() })}
                     required
-                    placeholder="例如: fun-dive, dsd"
+                    placeholder="fun-dive, dsd"
                     disabled={!!editingTrip}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>行程类型</Label>
+                  <Label>{t('tripType')}</Label>
                   <Select
                     value={formData.type}
                     onValueChange={(v) => setFormData({ ...formData, type: v || '' })}
@@ -254,38 +254,35 @@ export default function TripsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {tripTypes.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="fun-dive">{t('funDive')} - {t('funDiveDesc')}</SelectItem>
+                      <SelectItem value="dsd">{t('dsd')} - {t('dsdDesc')}</SelectItem>
+                      <SelectItem value="snorkeling">{t('snorkeling')} - {t('snorkelingDesc')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>行程名称</Label>
+                <Label>{t('shipName')}</Label>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  placeholder="例如: Fun Dive 一日游"
+                  placeholder="Fun Dive 一日游"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>描述</Label>
+                <Label>{t('description')}</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="行程介绍..."
                   rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>图片 URL</Label>
+                <Label>{t('imageUrl')}</Label>
                 <Input
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
@@ -295,15 +292,15 @@ export default function TripsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>时长</Label>
+                  <Label>{t('duration')}</Label>
                   <Input
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                    placeholder="例如: 半天, 一天"
+                    placeholder="半天, 一天"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>价格 (฿)</Label>
+                  <Label>{t('price')}</Label>
                   <Input
                     type="number"
                     value={formData.price}
@@ -314,7 +311,7 @@ export default function TripsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>显示顺序</Label>
+                  <Label>{t('displayOrder')}</Label>
                   <Input
                     type="number"
                     value={formData.displayOrder}
@@ -322,7 +319,7 @@ export default function TripsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>状态</Label>
+                  <Label>{t('status')}</Label>
                   <Select
                     value={formData.isActive ? 'true' : 'false'}
                     onValueChange={(v) => setFormData({ ...formData, isActive: v === 'true' })}
@@ -331,8 +328,8 @@ export default function TripsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="true">启用</SelectItem>
-                      <SelectItem value="false">禁用</SelectItem>
+                      <SelectItem value="true">{t('active')}</SelectItem>
+                      <SelectItem value="false">{t('inactive')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -341,10 +338,10 @@ export default function TripsPage() {
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={closeModal}>
-                取消
+                {t('cancel')}
               </Button>
               <Button type="submit" className="bg-cyan-600 hover:bg-cyan-700">
-                保存
+                {t('save')}
               </Button>
             </DialogFooter>
           </form>

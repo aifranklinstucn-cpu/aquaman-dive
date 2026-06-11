@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
+import { locales, localeNames, type Locale } from '@/i18n/request';
 
 export default async function AdminLayout({
   children,
@@ -9,14 +10,16 @@ export default async function AdminLayout({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const t = await getTranslations({ locale: lang, namespace: 'admin' });
+  const locale = lang as Locale;
+  const t = await getTranslations({ locale, namespace: 'admin' });
+  const tNav = await getTranslations({ locale, namespace: 'nav' });
 
   const navItems = [
-    { href: `/${lang}/admin`, label: t('dashboard'), icon: '📊' },
-    { href: `/${lang}/admin/ships`, label: t('ships'), icon: '🚢' },
-    { href: `/${lang}/admin/courses`, label: t('courses'), icon: '📚' },
-    { href: `/${lang}/admin/trips`, label: t('trips'), icon: '🏊' },
-    { href: `/${lang}/admin/bookings`, label: t('bookings'), icon: '📋' },
+    { href: `/${locale}/admin`, label: t('dashboard'), icon: '📊' },
+    { href: `/${locale}/admin/ships`, label: t('ships'), icon: '🚢' },
+    { href: `/${locale}/admin/courses`, label: t('courses'), icon: '📚' },
+    { href: `/${locale}/admin/trips`, label: t('trips'), icon: '🏊' },
+    { href: `/${locale}/admin/bookings`, label: t('bookings'), icon: '📋' },
   ];
 
   return (
@@ -26,18 +29,35 @@ export default async function AdminLayout({
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href={`/${lang}/admin`} className="text-xl font-bold">
+              <Link href={`/${locale}/admin`} className="text-xl font-bold">
                 AQUAMAN Admin
               </Link>
               <span className="text-zinc-400 text-sm">/</span>
               <span className="text-zinc-400 text-sm">{t('title')}</span>
             </div>
-            <Link
-              href={`/${lang}`}
-              className="text-sm text-zinc-400 hover:text-white transition-colors"
-            >
-              ← {t('backToSite')}
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href={`/${locale}`}
+                className="text-sm text-zinc-400 hover:text-white transition-colors"
+              >
+                ← {t('backToSite')}
+              </Link>
+              <div className="flex items-center gap-1 ml-4">
+                {locales.map((l) => (
+                  <Link
+                    key={l}
+                    href={`/${l}/admin`}
+                    className={`px-2 py-1 text-xs rounded transition-colors ${
+                      l === locale
+                        ? 'bg-cyan-600 text-white'
+                        : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+                    }`}
+                  >
+                    {localeNames[l]}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </header>
