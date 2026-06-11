@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "home": "Home",
+    "courses": "Courses",
+    "booking": "Booking",
+    "gallery": "Gallery",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "AQUAMAN Phuket Diving",
+    "subtitle": "Explore the mysteries of the Andaman Sea",
+    "cta": "Book Now"
+  },
+  "courses": {
+    "title": "Our Courses",
+    "subtitle": "From beginner to professional diver"
+  },
+  "booking": {
+    "title": "Online Booking",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "guests": "Guests",
+    "notes": "Notes",
+    "submit": "Confirm Booking",
+    "deposit": "Pay Deposit",
+    "full": "Pay Full Amount"
+  },
+  "footer": {
+    "copyright": "© 2026 AQUAMAN Phuket Diving. All rights reserved."
+  }
+}

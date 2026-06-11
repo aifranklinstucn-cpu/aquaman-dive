@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "home": "首页",
+    "courses": "课程",
+    "booking": "预订",
+    "gallery": "图库",
+    "about": "关于我们",
+    "contact": "联系我们"
+  },
+  "hero": {
+    "title": "AQUAMAN 普吉岛潜水",
+    "subtitle": "探索安达曼海的奥秘",
+    "cta": "立即预订"
+  },
+  "courses": {
+    "title": "我们的课程",
+    "subtitle": "从初学者到专业潜水员"
+  },
+  "booking": {
+    "title": "在线预订",
+    "selectDate": "选择日期",
+    "selectTime": "选择时段",
+    "name": "姓名",
+    "email": "邮箱",
+    "phone": "电话",
+    "guests": "人数",
+    "notes": "备注",
+    "submit": "确认预订",
+    "deposit": "支付定金",
+    "full": "全额支付"
+  },
+  "footer": {
+    "copyright": "© 2026 AQUAMAN 普吉岛潜水. 保留所有权利。"
+  }
+}
